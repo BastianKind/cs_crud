@@ -1,0 +1,49 @@
+### Find
+
+GET http://localhost:5271/movies
+
+###
+
+GET http://localhost:5271/movies/507f1f77bcf86cd100000003
+
+### Update
+
+PUT http://localhost:5271/movies/507f1f77bcf86cd100000003
+Content-Type: application/json
+
+{
+  "_id": {
+    "$oid": "507f1f77bcf86cd100000003"
+  },
+  "Title": "Titanic 2",
+  "Year": 1997,
+  "Summary": "Nichts auf dieser Welt konnte sie trennen.",
+  "Actors": [
+    "Leonardo DiCaprio",
+    "Kate Winslet",
+    "Bill Paxton",
+    "Kathy Bates"
+  ]
+}
+### Create
+
+POST http://localhost:5271/movies
+Content-Type: application/json
+
+{
+  "Title": "The Matrix",
+  "Year": 1999,
+  "Summary": "Ein Hacker entdeckt die wahre Natur der Realität und seine Rolle im Krieg gegen ihre Unterdrücker.",
+  "Actors": [
+    "Keanu Reeves",
+    "Laurence Fishburne",
+    "Carrie-Anne Moss",
+    "Hugo Weaving"
+  ]
+}
+
+### Kill
+
+DELETE http://localhost:5271/movies/6838475a0f3872d48d95c50e
+
+###

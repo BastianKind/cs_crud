@@ -102,6 +102,14 @@ else
 Console.WriteLine("G: ======================");
 
 Console.WriteLine("changing title of all Skyfall - 007 movies to Skyfall");
+// C# LINQ syntax: (way fucking simpler)
+/*
+moviesCollection.AsQueryable()
+    .Where(m => m.Title == "Skyfall - 007")
+    .ToList()
+    .ForEach(m => m.Title = "Skyfall");
+*/
+
 var updateDefinition = Builders<Movies>.Update.Set(m => m.Title, "Skyfall");
 moviesCollection.UpdateMany(m => m.Title == "Skyfall - 007", updateDefinition);
 
@@ -112,9 +120,9 @@ Console.WriteLine("Deleting all movies year <= 1995");
 moviesCollection.DeleteMany(m => m.Year <= 1995);
 
 Console.WriteLine("I: ======================");
-Console.WriteLine("Films per year >= 2010:");
+Console.WriteLine("Films per year >= 2000:");
 
-//C# LINQ syntax:   
+//C# LINQ syntax: (way fucking simpler)
 /*
 var filmsPerYear = moviesCollection.AsQueryable()
    .Where(m => m.Year >= 2000)
