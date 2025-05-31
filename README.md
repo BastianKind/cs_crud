@@ -1,5 +1,9 @@
 # C# with CRUD
 
+## Nugget Packages
+
+- MongoDB.Driver
+
 ## LINQ vs MongoDB Filter:
 
 ### LINQ
