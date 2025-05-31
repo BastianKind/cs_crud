@@ -19,12 +19,12 @@ app.MapGet("/", () =>
 
 app.MapGet("/movies", () =>
 {
-    return moviesCollection.Find(_ => true).SortBy(m => m.Year).ToList();
+    return Results.Ok(moviesCollection.Find(_ => true).SortBy(m => m.Year).ToList());
 });
 
 app.MapGet("/movies/{id}", (string id) =>
 {
-    return moviesCollection.Find(m => m.Id == id).FirstOrDefault();
+    return Results.Ok(moviesCollection.Find(m => m.Id == id).FirstOrDefault());
 });
 
 // Update
