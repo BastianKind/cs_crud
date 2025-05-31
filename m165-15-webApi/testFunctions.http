@@ -8,26 +8,16 @@ GET http://localhost:5271/movies
 
 ###
 
-GET http://localhost:5271/movies/507f1f77bcf86cd100000003
+GET http://localhost:5271/movies/507f1f77bcf86cd100000001
 
 ### Update
 
-PUT http://localhost:5271/movies/507f1f77bcf86cd100000003
+PUT http://localhost:5271/movies/507f1f77bcf86cd100000001
 Content-Type: application/json
 
 {
-  "_id": {
-    "$oid": "507f1f77bcf86cd100000003"
-  },
-  "Title": "Titanic 2",
-  "Year": 1997,
-  "Summary": "Nichts auf dieser Welt konnte sie trennen.",
-  "Actors": [
-    "Leonardo DiCaprio",
-    "Kate Winslet",
-    "Bill Paxton",
-    "Kathy Bates"
-  ]
+  "title": "Top Gun: Maverick",
+  "year": 2022
 }
 ### Create
 

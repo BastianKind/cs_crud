@@ -22,30 +22,43 @@ app.MapGet("/movies", () =>
     return Results.Ok(moviesCollection.Find(_ => true).SortBy(m => m.Year).ToList());
 });
 
-app.MapGet("/movies/{id}", (string id) =>
+app.MapGet("/movies/{_id}", (string _id) =>
 {
-    return Results.Ok(moviesCollection.Find(m => m.Id == id).FirstOrDefault());
+    return Results.Ok(moviesCollection.Find(m => m._id == _id).FirstOrDefault());
 });
 
 // Update
 
-app.MapPut("/movies/{id}", (string id, Movies movie) =>
+app.MapPut("/movies/{objectId}", (string objectId, Movies changes) =>
 {
-    movie.Id = id;
-    moviesCollection.ReplaceOne(m => m.Id == id, movie);
-    return Results.Ok(movie);
+    /*
+        movie._id = _id;
+        moviesCollection.ReplaceOne(m => m._id == _id, movie);
+        return Results.Ok(movie);
+    */
+    var updates = changes.GetType()
+        .GetProperties()
+        .Where(prop => prop.GetValue(changes) is {} value)
+        .Select(prop => Builders<Movies>.Update.Set(prop.Name, prop.GetValue(changes)))
+        .ToList();
+
+    var result = moviesCollection.UpdateOne(
+        Builders<Movies>.Filter.Eq("_id", objectId),
+        Builders<Movies>.Update.Combine(updates));
+
+    return Results.Ok(result);
 });
 
 // Create
 app.MapPost("/movies", (Movies movie) =>
 {
     moviesCollection.InsertOne(movie);
-    return Results.Created($"/movies/{movie.Id}", movie);
+    return Results.Created($"/movies/{movie._id}", movie);
 });
 // Kill
-app.MapDelete("/movies/{id}", (string id) =>
+app.MapDelete("/movies/{_id}", (string _id) =>
 {
-    moviesCollection.DeleteOne(m => m.Id == id);
+    moviesCollection.DeleteOne(m => m._id == _id);
     return Results.NoContent();
 });
 
