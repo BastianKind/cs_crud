@@ -1,5 +1,11 @@
 # C# with CRUD
 
+## Create new minimal WebApi project
+
+```bash
+dotnet new web --name WebApi --framework net8.0
+```
+
 ## Nugget Packages
 
 - MongoDB.Driver
