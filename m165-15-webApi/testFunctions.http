@@ -1,3 +1,7 @@
+### Index
+
+GET http://localhost:5271/
+
 ### Find
 
 GET http://localhost:5271/movies

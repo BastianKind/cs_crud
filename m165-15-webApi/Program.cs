@@ -6,38 +6,25 @@ using MongoDB.Driver;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-const string connectionString = "mongodb://localhost:27017";
-MongoClient client = new MongoClient(connectionString);
-var db = client.GetDatabase("M165");
+MongoClient client = new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString"));
+var db = client.GetDatabase(builder.Configuration.GetValue<string>("MongoDB:DatabaseName"));
 var moviesCollection = db.GetCollection<Movies>("Movies");
 
 app.MapGet("/", () =>
 {
-    var html = "<h1>Databases</h1><br><ul>";
-    foreach (var dbName in client.ListDatabaseNames().ToList())
-    {
-        html += $"<li>{dbName}</li>";
-    }
-    html += "</ul>";
-    return Results.Content(html, "text/html");
+    return Results.Ok((client.ListDatabaseNames().ToList()));
 });
 
 // Find
 
 app.MapGet("/movies", () =>
 {
-    return Results.Content(moviesCollection.Find(m => true)
-        .SortBy(m => m.Year)
-        .ToList()
-        .ToJson(), "application/json");
+    return moviesCollection.Find(_ => true).SortBy(m => m.Year).ToList();
 });
 
 app.MapGet("/movies/{id}", (string id) =>
 {
-    return Results.Content(moviesCollection
-        .Find(m => m.Id == id)
-        .FirstOrDefault()
-        .ToJson(), "application/json");
+    return moviesCollection.Find(m => m.Id == id).FirstOrDefault();
 });
 
 // Update
@@ -45,13 +32,8 @@ app.MapGet("/movies/{id}", (string id) =>
 app.MapPut("/movies/{id}", (string id, Movies movie) =>
 {
     movie.Id = id;
-    moviesCollection
-        .ReplaceOne(m => m.Id == id, movie);
-    
-    return Results.Content(moviesCollection
-        .Find(m => m.Id == id)
-        .FirstOrDefault()
-        .ToJson(), "application/json");
+    moviesCollection.ReplaceOne(m => m.Id == id, movie);
+    return Results.Ok(movie);
 });
 
 // Create
@@ -64,7 +46,7 @@ app.MapPost("/movies", (Movies movie) =>
 app.MapDelete("/movies/{id}", (string id) =>
 {
     moviesCollection.DeleteOne(m => m.Id == id);
-    return Results.StatusCode(statusCode: 204);
+    return Results.NoContent();
 });
 
 app.Run();
