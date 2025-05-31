@@ -89,9 +89,14 @@ if(moviesCollection.Find(c => c.Title == "The Davinci Code").Count() == 0 &&
     Console.WriteLine("No movies found, inserting new ones.");
     moviesCollection.InsertMany(moviesArray);
     Console.WriteLine($"Added {moviesArray.Count} movies:");
+    // C# LINQ syntax: (way fucking simpler)
+    //moviesArray = moviesCollection.Find(c => moviesArray.Select(m => m.Title).Contains(c.Title)).ToList();
+    
+    var filterF = Builders<Movies>.Filter.In("Title", moviesArray.Select(m => m.Title));
+    moviesArray = moviesCollection.Find(filterF).ToList();
     foreach (var m in moviesArray)
     {
-        Console.WriteLine($"\t- {movie.Title} ({movie.Year})");
+        Console.WriteLine($"\t- {movie.Title} ({movie.Id})");
     }
 }
 else 
@@ -117,7 +122,10 @@ Console.WriteLine("H: ======================");
 
 Console.WriteLine("Deleting all movies year <= 1995");
 
-moviesCollection.DeleteMany(m => m.Year <= 1995);
+// C# LINQ syntax: (way fucking simpler)
+//moviesCollection.DeleteMany(m => m.Year <= 1995);
+var filterH = Builders<Movies>.Filter.Lte("Year", 1995);
+moviesCollection.DeleteMany(filterH);
 
 Console.WriteLine("I: ======================");
 Console.WriteLine("Films per year >= 2000:");
@@ -132,8 +140,10 @@ var filmsPerYear = moviesCollection.AsQueryable()
    .ToList();
 */
 var sort = Builders<FilmsPerYear>.Sort.Ascending("Year");
+var filterI = Builders<Movies>.Filter.Gte("Year", 2000);
 var filmsPerYear = moviesCollection.Aggregate()
-    .Match(m => m.Year >= 2000)
+    //.Match(m => m.Year >= 2000)
+    .Match(filterI)
     .Group(m => m.Year, g => new FilmsPerYear(){ Year = g.Key, Count = g.Count() })
     .Sort(sort)
     .ToList();
@@ -141,6 +151,16 @@ var filmsPerYear = moviesCollection.Aggregate()
 foreach (var item in filmsPerYear)
 {
     Console.WriteLine($"\t- {item.Year}: {item.Count} films");
+}
+
+Console.WriteLine("J: ======================");
+Console.WriteLine("All movies in collection as JSON:");
+
+// C# LINQ syntax: (way fucking simpler)
+//foreach (var m in moviesCollection.Find(m => true).ToList().toJson())
+foreach (var m in moviesCollection.Find(FilterDefinition<Movies>.Empty).ToList())
+{
+    Console.WriteLine($"\t- {m.ToJson()}");
 }
 
 Console.WriteLine("======================================================");
